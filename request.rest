@@ -1,0 +1,123 @@
+Panitia:
+{
+    "username": "cia",
+    "password": "akuCia",
+    "loginAs": "Panitia",
+    "nama": "Cia123",
+    "fakultas": "Fasilkom",
+    "jurusan": "Sistem Informasi",
+    "angkatan": 2023,
+    "tipePengurus": "PI",
+    "bidangTerkait": "Koordinator Mentor",
+    "jabatan": "Penanggung Jawab"
+}
+
+{
+    "username": "jojo",
+    "password": "akuJojo",
+    "loginAs": "Panitia",
+    "nama": "jojo12",
+    "fakultas": "Fasilkom",
+    "jurusan": "Ilmu Komputer",
+    "angkatan": 2022,
+    "tipePengurus": "PI",
+    "bidangTerkait": "Koordinator Mentor",
+    "jabatan": "Staff"
+}
+
+{
+    "username": "Eryaw",
+    "password": "akuEryaw",
+    "loginAs": "Panitia",
+    "nama": "Eryaw12443",
+    "fakultas": "Fasilkom",
+    "jurusan": "Ilmu Komputer",
+    "angkatan": 2021,
+    "tipePengurus": "PI",
+    "bidangTerkait": "Koordinator Mentor",
+    "jabatan": "Wakil Penanggung Jawab"
+}
+
+Peserta:
+
+{
+    "username": "budy",
+    "password": "akuBudy",
+    "loginAs": "Peserta",
+    "nama": "Budyyono",
+    "fakultas": "Fasilkom",
+    "jurusan": "Sastra Jawa",
+    "angkatan": 2024,
+    "jalurMasuk": "SIMAK",
+    "noKelompok": 169
+}
+
+{
+    "username": "heri",
+    "password": "akuHeri",
+    "loginAs": "Peserta",
+    "nama": "Herii",
+    "fakultas": "Fasilkom",
+    "jurusan": "Sastra Korea",
+    "angkatan": 2024,
+    "jalurMasuk": "SIMAK",
+    "noKelompok": 169
+}
+
+{
+    "username": "andy",
+    "password": "akuAndy",
+    "loginAs": "Peserta",
+    "nama": "Andyyono",
+    "fakultas": "Fasilkom",
+    "jurusan": "Sastra Jepang",
+    "angkatan": 2024,
+    "jalurMasuk": "SIMAK",
+    "noKelompok": 109
+}
+
+Mentor:
+
+{
+    "username": "shafa",
+    "password": "akuShafa",
+    "loginAs": "Mentor",
+    "nama": "Shafa Najmi",
+    "fakultas": "Fasilkom",
+    "jurusan": "Ilmu Komputer",
+    "angkatan": 2021,
+    "jalurMasuk": "SIMAK",
+    "noKelompok": 169
+}
+
+Sponsor:
+
+{
+    "username": "aqua",
+    "password": "akuAqua",
+    "loginAs": "Sponsor",
+    "namaSponsor": "Aqua enak"
+}
+
+{
+    "username": "vit",
+    "password": "akuVit",
+    "loginAs": "Sponsor",
+    "namaSponsor": "Vit gacor"
+}
+
+Pembicara:
+
+{
+    "username": "najwa",
+    "password": "akuNajwa",
+    "loginAs": "Pembicara",
+    "namaPembicara": "Najwa Shihab"
+}
+
+{
+    "username": "deddy",
+    "password": "akuDeddy",
+    "loginAs": "Pembicara",
+    "namaPembicara": "Deddy Corbuzier"
+}
