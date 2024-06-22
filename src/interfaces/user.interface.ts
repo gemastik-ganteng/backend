@@ -2,9 +2,12 @@ import mongoose from "mongoose"
 
 interface User {
     _id: mongoose.Schema.Types.ObjectId,
-    username: string,
+    name: string,
     password: string,
-    role: "Warga" | "Pemerintah"
+    role: "Warga" | "Pemerintah",
+    phone: string,
+    email: string,
+    username: string
 }
 
 export default User

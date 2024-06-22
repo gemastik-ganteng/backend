@@ -20,26 +20,23 @@ interface Id {
 }
 
 const register = async (req: Request, res: Response) => {
+    console.log("HERE")
     try {
-        const { username,
+        const { name,
                 password, 
-                loginAs, 
+                email,
+                phone
                 }: RegisterRequestBody = req.body as RegisterRequestBody
-        
-        if (! ["Warga", "Pemerintah"].includes(loginAs)) {
-            return res.status(404).json({ message: "Role Yang Dipilih Tidak Valid." })
-        }
+
 
         // Hash Password dan buat User baru
         const hashedPassword = await bcrypt.hash(password, 10)
-        const newUser = new UserModel({ username, password: hashedPassword, role: loginAs })
-        const userId = newUser._id
-
+        const newUser = new UserModel({ name, password: hashedPassword, role: 'Warga', email, phone, username: email })
         await newUser.save()
-
         res.status(200)
     }
     catch (error: unknown) {
+        console.log(error)
         if (error instanceof Error) res.status(503).json({ message: error.message });
         else res.sendStatus(500);
     }

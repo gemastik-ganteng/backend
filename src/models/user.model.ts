@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import User from "../interfaces/user.interface";
 
 const userSchema = new mongoose.Schema({
-    username: {
+    email: {
         type: String,
         require: true,
         unique: true
@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String
+    },
+    username: {
+        type: String,
+        required: true,
+        unique: true // pastikan username unik
     }
 })
 
