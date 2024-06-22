@@ -8,14 +8,13 @@ import RegisterRequestBody from '../interfaces/RequestInterfaces/RequestBodyInte
 import TokenModel from '../models/token.models'
 import User from '../interfaces/user.interface'
 import RequestWithUser from '../interfaces/RequestInterfaces/requestWithUser.interface'
-import { v4 as uuidv4 } from 'uuid';
 import VerifyOTPRequestBody from '../interfaces/RequestInterfaces/RequestBodyInterface/verifyOTPRequestBody.interface'
+import { mapEmailToOTP, generateOTP, addOTP } from '../services/otp-service'
+import { sendOTPEmail } from '../services/email-service'
 
 dotenv.config()
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string
-
-const mapEmailToOTP = new Map<string, UserOTP>()
 
 interface Id {
     id: string,
@@ -23,31 +22,19 @@ interface Id {
     exp: any
 }
 
-interface UserOTP {
-    user: User,
-    otp: number
-}
-
-const generateOTP = () => {
-    const otp = Math.floor((Math.random()*1000000)+1);
-    return otp;
-};
-
 const register = async (req: Request, res: Response) => {
     const otp = generateOTP()
-    console.log(otp)
     try {
         const { name,
                 password, 
                 email,
                 phone
                 }: RegisterRequestBody = req.body as RegisterRequestBody
-        
-        // Hash Password dan buat User baru
+    
         const hashedPassword = await bcrypt.hash(password, 10)
         const newUser = new UserModel({ name, password: hashedPassword, role: 'Warga', email, phone, username: email })
-        mapEmailToOTP.set(email, { user: newUser, otp })
-
+        addOTP(email, newUser, otp)
+        await sendOTPEmail(email, otp)
         res.sendStatus(200)
     }
     catch (error: unknown) {
@@ -100,10 +87,7 @@ const login = async (req: Request, res: Response) => {
         res.cookie("ACCESS_TOKEN_USER", accessToken)
         res.cookie("REFRESH_TOKEN_USER", refreshToken)
 
-        // const newToken = new TokenModel({ userId: user._id, refreshToken })
-        // await newToken.save()
-
-        return res.status(200).json({ accessToken, refreshToken })
+        return res.status(200).json({ accessToken, refreshToken, user })
     }
     catch (error: unknown) {
         if (error instanceof Error) return res.status(503).json({ message: error.message });
