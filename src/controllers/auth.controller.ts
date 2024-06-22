@@ -8,10 +8,14 @@ import RegisterRequestBody from '../interfaces/RequestInterfaces/RequestBodyInte
 import TokenModel from '../models/token.models'
 import User from '../interfaces/user.interface'
 import RequestWithUser from '../interfaces/RequestInterfaces/requestWithUser.interface'
+import { v4 as uuidv4 } from 'uuid';
+import VerifyOTPRequestBody from '../interfaces/RequestInterfaces/RequestBodyInterface/verifyOTPRequestBody.interface'
 
 dotenv.config()
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string
+
+const mapEmailToOTP = new Map<string, UserOTP>()
 
 interface Id {
     id: string,
@@ -19,26 +23,65 @@ interface Id {
     exp: any
 }
 
+interface UserOTP {
+    user: User,
+    otp: number
+}
+
+const generateOTP = () => {
+    const otp = Math.floor((Math.random()*1000000)+1);
+    return otp;
+};
+
 const register = async (req: Request, res: Response) => {
-    console.log("HERE")
+    const otp = generateOTP()
+    console.log(otp)
     try {
         const { name,
                 password, 
                 email,
                 phone
                 }: RegisterRequestBody = req.body as RegisterRequestBody
-
-
+        
         // Hash Password dan buat User baru
         const hashedPassword = await bcrypt.hash(password, 10)
         const newUser = new UserModel({ name, password: hashedPassword, role: 'Warga', email, phone, username: email })
-        await newUser.save()
-        res.status(200)
+        mapEmailToOTP.set(email, { user: newUser, otp })
+
+        res.sendStatus(200)
     }
     catch (error: unknown) {
         console.log(error)
-        if (error instanceof Error) res.status(503).json({ message: error.message });
-        else res.sendStatus(500);
+        if (error instanceof Error) return res.status(503).json({ message: error.message });
+        return res.sendStatus(500);
+    }
+}
+
+const verifyOTP = async (req: Request, res: Response) => {
+    try{
+        const {
+            otp,
+            email
+        }: VerifyOTPRequestBody = req.body as VerifyOTPRequestBody
+
+        if (! mapEmailToOTP.get(email)) {
+            res.sendStatus(404)
+            return
+        }
+
+        if (mapEmailToOTP.get(email)?.otp !== parseInt(otp)) {
+            res.sendStatus(401)
+            return
+        }
+
+        const user: User = mapEmailToOTP.get(email)!.user 
+        const newUser = new UserModel({ name: user.name, password: user.password, role: user.role, email: user.email, username: user.email })
+        await newUser.save()
+        res.sendStatus(200)
+    }
+    catch (error: unknown){
+        if (error instanceof Error) return res.status(503).json({ message: error.message });
+        return res.sendStatus(500);
     }
 }
 
@@ -60,11 +103,11 @@ const login = async (req: Request, res: Response) => {
         // const newToken = new TokenModel({ userId: user._id, refreshToken })
         // await newToken.save()
 
-        res.status(200).json({ accessToken, refreshToken })
+        return res.status(200).json({ accessToken, refreshToken })
     }
     catch (error: unknown) {
-        if (error instanceof Error) res.status(503).json({ message: error.message });
-        else res.sendStatus(500);
+        if (error instanceof Error) return res.status(503).json({ message: error.message });
+        return res.sendStatus(500);
     }
 }
 
@@ -75,11 +118,11 @@ const logout = async (req: Request, res: Response) => {
         await TokenModel.deleteMany({})
         res.cookie("ACCESS_TOKEN_USER", "")
         res.cookie("REFRESH_TOKEN_USER", "")
-        res.status(204).send("Berhasil logout")
+        return res.status(204).send("Berhasil logout")
     }
     catch (error: unknown) {
-        if (error instanceof Error) res.status(503).json({ message: error.message });
-        else res.sendStatus(500);
+        if (error instanceof Error) return res.status(503).json({ message: error.message });
+        return res.sendStatus(500);
     }
 }
 
@@ -91,11 +134,11 @@ const changePassword = async (req: RequestWithUser, res: Response) => {
         if (! (await bcrypt.compare(password, user.password))) return res.status(401).send("password tidak sesuai!")
         user.password = await bcrypt.hash(newPassword, 10)
         await user.save()
-        res.status(204).send("Password berhasil diubah!")
+        return res.status(204).send("Password berhasil diubah!")
     }
     catch (error: unknown) {
-        if (error instanceof Error) res.status(503).json({ message: error.message });
-        else res.sendStatus(500);
+        if (error instanceof Error) return res.status(503).json({ message: error.message });
+        return res.sendStatus(500);
     }
 }
 
@@ -116,12 +159,12 @@ const generateToken = async (req: Request, res: Response) => {
             sameSite: 'strict',
         })
 
-        res.sendStatus(201)
+        return res.sendStatus(201)
     }
     catch (error: unknown) {
-        if (error instanceof Error) res.status(503).json({ message: error.message });
-        else res.sendStatus(500);
+        if (error instanceof Error) return res.status(503).json({ message: error.message });
+        return res.sendStatus(500);
     }
 }
 
-export { register, login, logout, changePassword, generateToken }
+export { register, login, logout, changePassword, generateToken, verifyOTP }
