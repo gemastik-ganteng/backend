@@ -1,15 +1,16 @@
 import { Request, Response } from 'express'
 import RequestWithUser from '../interfaces/RequestInterfaces/requestWithUser.interface'
 import CreateReportRequestBody from '../interfaces/RequestInterfaces/RequestBodyInterface/createReportRequestBody.interface'
+import { uploadBukti } from '../services/bukti-service';
 import ReportModel from '../models/report.model'
 
 const createReport = async (req: RequestWithUser, res: Response) => {
     try{
         const { jenisKejahatan, lokasiKejadian, deskripsi }: CreateReportRequestBody = req.body as CreateReportRequestBody
+				const files = req.files as Express.Multer.File[];
         const newReport = new ReportModel({ userId: req.user._id, jenisKejahatan, lokasiKejadian, deskripsi, waktuKejadian: new Date()})
-        await newReport.save()
-
-        res.status(204).json(newReport)
+				await uploadBukti(files, newReport)
+        res.sendStatus(204)
     }
     catch (error: unknown) {
         if (error instanceof Error) res.status(503).json({ message: error.message });
@@ -20,7 +21,6 @@ const createReport = async (req: RequestWithUser, res: Response) => {
 const getAllReport = async (req: RequestWithUser, res: Response) => {
     try{
         const reports = await ReportModel.find({})
-
         res.status(200).json(reports)
     }
     catch (error: unknown) {
