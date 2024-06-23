@@ -2,10 +2,9 @@ import {Request, Response } from 'express'
 import RequestWithUser from '../interfaces/RequestInterfaces/requestWithUser.interface'
 import { uploadBukti } from '../services/bukti-service';
 import ReportModel from '../models/report.model'
+import CreateReportRequestBody from '../interfaces/RequestInterfaces/RequestBodyInterface/createReportRequestBody.interface';
 
 const createReport = async (req: Request, res: Response) => {
-    console.log("HEI")
-    console.log(req.body)
     try{
         const { 
             jenisTindakan: jenisKejahatan, 
@@ -14,10 +13,18 @@ const createReport = async (req: Request, res: Response) => {
             tanggalKejadian,
             judul,
             deskripsiKejadian: deskripsi,
-            email
-        
-        } = req.body
-		const files = req.files as Express.Multer.File[];
+            email,
+        } = req.body as CreateReportRequestBody
+				console.log("body", req.body)
+
+				const files: Express.Multer.File[] = []
+				for (var i = 0; ; i++) {
+					if (! req.body.get(`files[${i}]`)) break;
+					files.push(req.body.get(`files[${i}]`))
+				}
+
+				console.log("::",files)
+
         const newReport = new ReportModel({ 
             email: email,
             judul,
