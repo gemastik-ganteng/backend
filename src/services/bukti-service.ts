@@ -46,7 +46,8 @@ export const uploadBukti = async (base64StrList: string[], report: Report) => {
 		deskripsi: report.deskripsi,
 		waktuKejadian: report.waktuKejadian,
 		lokasiKejadian: report.lokasiKejadian,
-		files: report.files, // overhead
+		files: report.files,
+		namaPelapor: report.namaPelapor
 	   });
 	  await newReport.save();
 	} catch (error) {

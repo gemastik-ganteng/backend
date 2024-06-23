@@ -6,6 +6,9 @@ const reportSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    namaPelapor: {
+        type: String
+    },
     judul: {
         type: String,
         required: true

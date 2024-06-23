@@ -10,6 +10,7 @@ const createReport = async (req: Request, res: Response): Promise<void> => {
         lokasiKejadian,
         waktuKejadian,
         tanggalKejadian,
+        namaPelapor,
         judul,
         deskripsiKejadian: deskripsi,
         email,
@@ -26,6 +27,7 @@ const createReport = async (req: Request, res: Response): Promise<void> => {
         tanggalKejadian,
         deskripsi,
         waktuKejadian,
+        namaPelapor
         });
     
         console.log(req.body)
