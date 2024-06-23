@@ -5,7 +5,10 @@ import { gfs } from '../server';
 import { ObjectId } from 'mongodb';
 
 export const uploadBukti = async (files: Express.Multer.File[], report: Report) => {
+	console.log('TEST')
+	console.log(files)
 	if (!files || files.length === 0) {
+		console.log('GA ADA')
 		return 
 	}
 	let uploadCount = 0;
@@ -20,16 +23,15 @@ export const uploadBukti = async (files: Express.Multer.File[], report: Report) 
 		writestream.on('finish', () => {
             report.files.push(new ObjectId(uniqueFilename))
 			uploadCount++;
-
-			if (uploadCount === files.length) {
-				return
-			}
 		});
 
 		writestream.on('error', (err: Error) => {
+			console.log('error upload')
+			console.log(err)
 			return
 		});
 	});
+	console.log("LINE 31")
     const newReport = new ReportModel({ ...report })
     await newReport.save()
 };

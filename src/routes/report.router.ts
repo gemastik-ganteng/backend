@@ -4,7 +4,7 @@ import { authenticateUser } from '../middlewares/auth.middleware'
 
 const reportRouter: Router = Router()
 
-reportRouter.post('', authenticateUser, createReport)
+reportRouter.post('', createReport)
 
 reportRouter.get('', authenticateUser, getAllReport)
 reportRouter.get('/:id', authenticateUser, getReportById)

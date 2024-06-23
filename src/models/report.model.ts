@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import Report from '../interfaces/report.interface';
 
 const reportSchema = new mongoose.Schema({
-    userId: {
+    email: {
         type: String,
         required: true,
     },
@@ -15,7 +15,11 @@ const reportSchema = new mongoose.Schema({
         required: true
     },
     waktuKejadian: {
-        type: Date,
+        type: String,
+        required: true
+    },
+    tanggalKejadian: {
+        type: String,
         required: true
     },
     lokasiKejadian: {
