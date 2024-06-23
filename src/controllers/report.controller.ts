@@ -1,6 +1,5 @@
 import {Request, Response } from 'express'
-import RequestWithUser from '../interfaces/RequestInterfaces/requestWithUser.interface'
-import { uploadBukti } from '../services/bukti-service';
+import { getBuktiByByLaporanIdPG, uploadBukti } from '../services/bukti-service';
 import ReportModel from '../models/report.model'
 import { getFilesBase64ByIds } from '../services/file-service';
 
@@ -30,8 +29,8 @@ const createReport = async (req: Request, res: Response): Promise<void> => {
         waktuKejadian,
         namaPelapor
         });
-    
         console.log(req.body)
+        await newReport.save()
 
      try {
             await uploadBukti(base64strFiles, newReport); 
@@ -87,19 +86,10 @@ const deleteReportById = async (req: Request, res: Response) => {
     }
 }
 
-const getBase64sFromIds = async (req: Request, res: Response) => {
-	try {
-		console.log("ADA")
-		const {filesInString}: {filesInString: string[]} = req.body
-		console.log(":"+filesInString)
-		const hasil = await getFilesBase64ByIds(filesInString)
-		console.log("WOIIOIOI")
-		return res.json(hasil)
-	}
-	catch (error: unknown) {
-		if (error instanceof Error) res.status(503).json({ message: error.message });
-		else res.sendStatus(500);
-	}
+const getBuktiByByLaporanId = async (req: Request, res: Response) =>{
+    const {laporanId} = req.body
+    const base64List: string[] = await getBuktiByByLaporanIdPG(laporanId);
+    res.json(base64List)
 }
 
-export { createReport, getAllReport, getReportById, deleteReportById, getBase64sFromIds }
+export { createReport, getAllReport, getReportById, deleteReportById, getBuktiByByLaporanId }

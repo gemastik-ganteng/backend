@@ -1,11 +1,10 @@
 import { Router } from "express";
-import { createReport, getAllReport, getReportById, deleteReportById, getBase64sFromIds } from "../controllers/report.controller";
-import { authenticateUser } from '../middlewares/auth.middleware'
+import { createReport, getAllReport, getReportById, deleteReportById, getBuktiByByLaporanId } from "../controllers/report.controller";
 
 const reportRouter: Router = Router()
 
 reportRouter.post('', createReport)
-reportRouter.post('/tobase64', getBase64sFromIds)
+reportRouter.post('/bukti', getBuktiByByLaporanId)
 
 reportRouter.get('', getAllReport)
 reportRouter.get('/:id', getReportById)

@@ -6,6 +6,7 @@ import cors from 'cors';
 import authRouter from './routes/auth.router';
 import reportRouter from './routes/report.router';
 import bodyParser from 'body-parser';
+import { Pool } from "pg";
 
 dotenv.config();
 
@@ -22,6 +23,10 @@ const mongooseOptions = {
     connectTimeoutMS: 2 * 60 * 60 * 1000, // 2 hours for connection timeout
     bufferCommands: false, // Disable Mongoose buffering
 };
+
+
+
+
 
 // Connect to MongoDB using mongoose.connect
 mongoose.connect(MONGO_URL, mongooseOptions)
