@@ -9,7 +9,7 @@ interface Report {
     tanggalKejadian: string,
     lokasiKejadian: string,
     deskripsi: string,
-    files: mongoose.Types.ObjectId[] // Array of ObjectIds referencing uploaded files in GridFS
+    files: string[] // Array of ObjectIds referencing uploaded files in GridFS
 }
 
 export default Report;

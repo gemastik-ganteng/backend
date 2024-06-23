@@ -1,12 +1,11 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import authRouter from './routes/auth.router';
 import reportRouter from './routes/report.router';
-import Grid from 'gridfs-stream';
-import multer from 'multer';
+import bodyParser from 'body-parser';
 
 dotenv.config();
 
@@ -14,25 +13,53 @@ const app: Express = express();
 const port = process.env.PORT || 4000;
 
 const MONGO_URL: string = process.env.DATABASE_URL || 'mongodb://localhost/gemastik-ui-backend';
-mongoose.connect(MONGO_URL);
-const db = mongoose.connection;
 
-export let gfs: Grid.Grid;
+// Set up MongoDB connection options
+const mongooseOptions = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 2 * 60 * 60 * 1000, // 2 hours for server selection timeout
+    connectTimeoutMS: 2 * 60 * 60 * 1000, // 2 hours for connection timeout
+    bufferCommands: false, // Disable Mongoose buffering
+};
 
-db.once('open', () => {
-  console.log('Connected to Mongoose');
-  gfs = Grid(db.db, mongoose.mongo);
-  gfs.collection('uploads');
+// Connect to MongoDB using mongoose.connect
+mongoose.connect(MONGO_URL, mongooseOptions)
+    .then(() => {
+        console.log('MongoDB connected');
+    })
+    .catch((error) => {
+        console.error('MongoDB connection error:', error);
+        process.exit(1); // Exit process on MongoDB connection error
+    });
+
+// Initialize GridFSBucket for file uploads
+export let gfsBucket: any;
+
+const conn = mongoose.connection; // Get default mongoose connection
+
+conn.once('open', () => {
+    gfsBucket = new mongoose.mongo.GridFSBucket(conn.db, {
+        bucketName: 'uploads' // Replace with your bucket name
+    });
 });
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+// Middleware for parsing JSON bodies
+app.use(express.json({ limit: '100mb' }));
 
+// Middleware body-parser untuk parsing application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Other middleware
 app.use(cookieParser());
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
-app.use(express.json());
 
+// Routes
 app.use('/auth', authRouter);
 app.use('/reports', reportRouter);
 
-app.listen(port, () => console.log(`[server]: Server is running at http://localhost:${port}`));
+// Start server
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+});
+

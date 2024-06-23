@@ -2,47 +2,48 @@ import {Request, Response } from 'express'
 import RequestWithUser from '../interfaces/RequestInterfaces/requestWithUser.interface'
 import { uploadBukti } from '../services/bukti-service';
 import ReportModel from '../models/report.model'
-import CreateReportRequestBody from '../interfaces/RequestInterfaces/RequestBodyInterface/createReportRequestBody.interface';
 
-const createReport = async (req: Request, res: Response) => {
-    try{
-        const { 
-            jenisTindakan: jenisKejahatan, 
-            lokasiKejadian,
-            waktuKejadian,
-            tanggalKejadian,
-            judul,
-            deskripsiKejadian: deskripsi,
-            email,
-        } = req.body as CreateReportRequestBody
-				console.log("body", req.body)
+const createReport = async (req: Request, res: Response): Promise<void> => {
 
-				const files: Express.Multer.File[] = []
-				for (var i = 0; ; i++) {
-					if (! req.body.get(`files[${i}]`)) break;
-					files.push(req.body.get(`files[${i}]`))
-				}
+    const {
+        jenisTindakan: jenisKejahatan,
+        lokasiKejadian,
+        waktuKejadian,
+        tanggalKejadian,
+        judul,
+        deskripsiKejadian: deskripsi,
+        email,
+        base64strFiles
+      } = req.body;
 
-				console.log("::",files)
+      console.log(req.body)
 
-        const newReport = new ReportModel({ 
-            email: email,
-            judul,
-            lokasiKejadian, 
-            jenisKejahatan,
-            tanggalKejadian,
-            deskripsi, 
-            waktuKejadian})
-				await uploadBukti(files, newReport)
-        res.sendStatus(204)
-        console.log('BERHASIL')
+      const newReport = new ReportModel({
+        email,
+        judul,
+        lokasiKejadian,
+        jenisKejahatan,
+        tanggalKejadian,
+        deskripsi,
+        waktuKejadian,
+        });
+    
+        console.log(req.body)
+
+     try {
+            await uploadBukti(base64strFiles, newReport); 
+            res.sendStatus(204);
+            console.log('BERHASIL');
+          } catch (error: unknown) {
+            console.log('GAGAL', error);
+            if (error instanceof Error) {
+              res.status(503).json({ message: error.message });
+            } else {
+              res.sendStatus(500);
+            }
     }
-    catch (error: unknown) {
-        console.log('GAGAL')
-        if (error instanceof Error) res.status(503).json({ message: error.message });
-        else res.sendStatus(500);
-    }
-}
+  
+  };
 
 const getAllReport = async (req: RequestWithUser, res: Response) => {
     try{

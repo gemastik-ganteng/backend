@@ -31,8 +31,8 @@ const reportSchema = new mongoose.Schema({
         required: true
     },
     files: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'File' // Reference to GridFS files
+        type: String,
+        required: true
     }]
 });
 
