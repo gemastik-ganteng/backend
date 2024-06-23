@@ -2,6 +2,7 @@ import {Request, Response } from 'express'
 import RequestWithUser from '../interfaces/RequestInterfaces/requestWithUser.interface'
 import { uploadBukti } from '../services/bukti-service';
 import ReportModel from '../models/report.model'
+import { getFilesBase64ByIds } from '../services/file-service';
 
 const createReport = async (req: Request, res: Response): Promise<void> => {
 
@@ -47,7 +48,7 @@ const createReport = async (req: Request, res: Response): Promise<void> => {
   
   };
 
-const getAllReport = async (req: RequestWithUser, res: Response) => {
+const getAllReport = async (req: Request, res: Response) => {
     try{
         const reports = await ReportModel.find({})
         res.status(200).json(reports)
@@ -58,7 +59,7 @@ const getAllReport = async (req: RequestWithUser, res: Response) => {
     }
 }
 
-const getReportById = async (req: RequestWithUser, res: Response) => {
+const getReportById = async (req: Request, res: Response) => {
     try{
         const idReport = req.params.id
         const report = await ReportModel.findById(idReport)
@@ -71,7 +72,7 @@ const getReportById = async (req: RequestWithUser, res: Response) => {
     }
 }
 
-const deleteReportById = async (req: RequestWithUser, res: Response) => {
+const deleteReportById = async (req: Request, res: Response) => {
     try{
         const idReport = req.params.id
         console.log("::",idReport)
@@ -86,4 +87,19 @@ const deleteReportById = async (req: RequestWithUser, res: Response) => {
     }
 }
 
-export { createReport, getAllReport, getReportById, deleteReportById }
+const getBase64sFromIds = async (req: Request, res: Response) => {
+	try {
+		console.log("ADA")
+		const {filesInString}: {filesInString: string[]} = req.body
+		console.log(":"+filesInString)
+		const hasil = await getFilesBase64ByIds(filesInString)
+		console.log("WOIIOIOI")
+		return res.json(hasil)
+	}
+	catch (error: unknown) {
+		if (error instanceof Error) res.status(503).json({ message: error.message });
+		else res.sendStatus(500);
+	}
+}
+
+export { createReport, getAllReport, getReportById, deleteReportById, getBase64sFromIds }
