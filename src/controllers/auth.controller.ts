@@ -62,7 +62,7 @@ const verifyOTP = async (req: Request, res: Response) => {
         }
 
         const user: User = mapEmailToOTP.get(email)!.user 
-        const newUser = new UserModel({ name: user.name, password: user.password, role: user.role, email: user.email, username: user.email })
+        const newUser = new UserModel({ name: user.name, password: user.password, phone: user.phone ,role: user.role, email: user.email, username: user.email })
         await newUser.save()
         res.sendStatus(200)
     }

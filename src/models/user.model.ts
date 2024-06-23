@@ -18,6 +18,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true // pastikan username unik
+    },
+    phone:{
+        type: String
+    },
+    name: {
+        type: String
     }
 })
 
