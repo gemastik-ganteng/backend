@@ -1,7 +1,6 @@
 import {Request, Response } from 'express'
 import { getBuktiByByLaporanIdPG, uploadBukti } from '../services/bukti-service';
 import ReportModel from '../models/report.model'
-import { getFilesBase64ByIds } from '../services/file-service';
 
 const createReport = async (req: Request, res: Response): Promise<void> => {
 
@@ -46,6 +45,12 @@ const createReport = async (req: Request, res: Response): Promise<void> => {
     }
   
   };
+
+const getAllReportByEmail = async (req: Request, res: Response) => {
+    const email = req.params.email
+    const reports = await ReportModel.find({email})
+    res.status(200).json(reports)
+}
 
 const getAllReport = async (req: Request, res: Response) => {
     try{
@@ -92,4 +97,4 @@ const getBuktiByByLaporanId = async (req: Request, res: Response) =>{
     res.json(base64List)
 }
 
-export { createReport, getAllReport, getReportById, deleteReportById, getBuktiByByLaporanId }
+export { createReport, getAllReport, getReportById, deleteReportById, getBuktiByByLaporanId, getAllReportByEmail }
