@@ -5,7 +5,7 @@ import ReportModel from '../models/report.model'
 const createReport = async (req: Request, res: Response): Promise<void> => {
 
     const {
-        jenisTindakan: jenisKejahatan,
+        jenisKejahatan,
         lokasiKejadian,
         waktuKejadian,
         tanggalKejadian,

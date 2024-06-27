@@ -5,7 +5,7 @@ interface Report {
     email: string,
     namaPelapor: string,
     judul: string,
-    jenisKejahatan: "Pencurian" | "Kekerasan" | "Perampokan" | "Musibah",
+    jenisKejahatan: "Pencurian" | "Penculikan" | "Pelecehan" | "Pemerkosaan" | "Kekerasan" | "Pembegalan" | "Penipuan" | "Narkoba",
     waktuKejadian: string,
     tanggalKejadian: string,
     lokasiKejadian: string,
