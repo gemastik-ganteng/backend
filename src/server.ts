@@ -57,7 +57,21 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Other middleware
 app.use(cookieParser());
-app.use(cors({ origin: '*', credentials: true }));
+
+const corsOptions = {
+    origin: 'https://warga-jaga-production.up.railway.app',
+    credentials: true,
+  };
+  
+  app.use(cors(corsOptions));
+  
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://warga-jaga-production.up.railway.app');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    next();
+  });
 
 // Routes
 app.use('/auth', authRouter);
