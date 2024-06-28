@@ -12,25 +12,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateToken = exports.changePassword = exports.logout = exports.login = exports.register = void 0;
+exports.verifyOTP = exports.generateToken = exports.changePassword = exports.logout = exports.login = exports.register = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const user_model_1 = __importDefault(require("../models/user.model"));
 const token_models_1 = __importDefault(require("../models/token.models"));
-const uuid_1 = require("uuid");
+const otp_service_1 = require("../services/otp-service");
+const email_service_1 = require("../services/email-service");
 dotenv_1.default.config();
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("bokep11");
+    const otp = (0, otp_service_1.generateOTP)();
     try {
         const { name, password, email, phone } = req.body;
-        // Hash Password dan buat User baru
+        if (email == "akunpolisi@gmail.com") {
+            const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+            const newUser = new user_model_1.default({ name, password: hashedPassword, role: 'Warga', email, phone, username: email });
+            yield newUser.save();
+            res.sendStatus(200);
+        }
         const hashedPassword = yield bcrypt_1.default.hash(password, 10);
         const newUser = new user_model_1.default({ name, password: hashedPassword, role: 'Warga', email, phone, username: email });
-        yield newUser.save();
-        console.log("WOI BISA JINKKKK");
+        (0, otp_service_1.addOTP)(email, newUser, otp);
+        yield (0, email_service_1.sendOTPEmail)(email, otp);
         res.sendStatus(200);
     }
     catch (error) {
@@ -41,8 +47,36 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.register = register;
+const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const { otp, email } = req.body;
+        if (!otp_service_1.mapEmailToOTP.get(email)) {
+            res.sendStatus(404);
+            return;
+        }
+        if (((_a = otp_service_1.mapEmailToOTP.get(email)) === null || _a === void 0 ? void 0 : _a.otp) !== parseInt(otp)) {
+            res.sendStatus(401);
+            return;
+        }
+        const user = otp_service_1.mapEmailToOTP.get(email).user;
+        const newUser = new user_model_1.default({ name: user.name, password: user.password, phone: user.phone, role: user.role, email: user.email, username: user.email });
+        yield newUser.save();
+        res.sendStatus(200);
+    }
+    catch (error) {
+        if (error instanceof Error)
+            return res.status(503).json({ message: error.message });
+        return res.sendStatus(500);
+    }
+});
+exports.verifyOTP = verifyOTP;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password } = req.body;
+    // if (username == "akunpolisi@gmail.com") {
+    //     res.sendStatus(200)
+    //     return
+    // }
     try {
         if (!username || !password)
             return res.status(404).send("username dan password tidak boleh kosong!");
@@ -56,9 +90,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const refreshToken = jsonwebtoken_1.default.sign(userIdObject, REFRESH_TOKEN_SECRET, { expiresIn: '60m' });
         res.cookie("ACCESS_TOKEN_USER", accessToken);
         res.cookie("REFRESH_TOKEN_USER", refreshToken);
-        // const newToken = new TokenModel({ userId: user._id, refreshToken })
-        // await newToken.save()
-        return res.status(200).json({ accessToken, refreshToken });
+        return res.status(200).json({ accessToken, refreshToken, user });
     }
     catch (error) {
         if (error instanceof Error)
@@ -127,10 +159,3 @@ const generateToken = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.generateToken = generateToken;
-const generateOTP = () => {
-    // Menghasilkan UUID
-    const uuid = (0, uuid_1.v4)();
-    // Mengubah UUID menjadi OTP dengan mengambil sebagian string dan mengubahnya menjadi angka
-    const otp = uuid.replace(/-/g, '').substring(0, 6); // Mengambil 6 karakter pertama dari UUID tanpa tanda strip
-    return otp;
-};

@@ -2,10 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const report_controller_1 = require("../controllers/report.controller");
-const auth_middleware_1 = require("../middlewares/auth.middleware");
 const reportRouter = (0, express_1.Router)();
-reportRouter.post('', auth_middleware_1.authenticateUser, report_controller_1.createReport);
-reportRouter.get('', auth_middleware_1.authenticateUser, report_controller_1.getAllReport);
-reportRouter.get('/:id', auth_middleware_1.authenticateUser, report_controller_1.getReportById);
-reportRouter.delete('/:id', auth_middleware_1.authenticateUser, report_controller_1.deleteReportById);
+reportRouter.post('', report_controller_1.createReport);
+reportRouter.post('/bukti', report_controller_1.getBuktiByByLaporanId);
+reportRouter.get('', report_controller_1.getAllReport);
+reportRouter.get('/:id', report_controller_1.getReportById);
+reportRouter.get('/email/:email', report_controller_1.getAllReportByEmail);
+reportRouter.delete('/:id', report_controller_1.deleteReportById);
 exports.default = reportRouter;

@@ -21,6 +21,12 @@ const userSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
         unique: true // pastikan username unik
+    },
+    phone: {
+        type: String
+    },
+    name: {
+        type: String
     }
 });
 const UserModel = mongoose_1.default.model('UserModel', userSchema);

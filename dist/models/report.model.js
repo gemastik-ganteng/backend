@@ -5,26 +5,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const reportSchema = new mongoose_1.default.Schema({
-    userId: {
+    email: {
         type: String,
-        require: true,
+        required: true,
+    },
+    namaPelapor: {
+        type: String
+    },
+    judul: {
+        type: String,
+        required: true
     },
     jenisKejahatan: {
         type: String,
-        require: true
+        required: true
     },
     waktuKejadian: {
-        type: Date,
-        require: true
+        type: String,
+        required: true
+    },
+    tanggalKejadian: {
+        type: String,
+        required: true
     },
     lokasiKejadian: {
         type: String,
-        require: true
+        required: true
     },
     deskripsi: {
         type: String,
-        require: true
-    }
+        required: true
+    },
+    files: [{
+            type: String,
+            required: true
+        }]
 });
-const ReportModel = mongoose_1.default.model('ReportModel', reportSchema);
+const ReportModel = mongoose_1.default.model('Report', reportSchema);
 exports.default = ReportModel;
