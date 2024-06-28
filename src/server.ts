@@ -23,7 +23,7 @@ const mongooseOptions = {
     connectTimeoutMS: 2 * 60 * 60 * 1000, // 2 hours for connection timeout
     bufferCommands: false, // Disable Mongoose buffering
 };
-
+app.use(cors());
 
 
 
