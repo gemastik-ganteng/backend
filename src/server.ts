@@ -58,15 +58,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Other middleware
 app.use(cookieParser());
 
-const corsOptions = {
-    origin: 'https://warga-jaga-production.up.railway.app',
-    credentials: true,
-    methods: 'GET,HEAD,OPTIONS,POST,PUT',
-    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-};
-
-app.use(cors(corsOptions));
-
 // Routes
 app.use('/auth', authRouter);
 app.use('/reports', reportRouter);

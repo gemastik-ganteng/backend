@@ -45,7 +45,13 @@ app.use(express_1.default.json({ limit: '100mb' }));
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 // Other middleware
 app.use((0, cookie_parser_1.default)());
-app.use((0, cors_1.default)({ origin: 'http://localhost:3000', credentials: true }));
+const corsOptions = {
+    origin: 'https://warga-jaga-production.up.railway.app',
+    credentials: true,
+    methods: 'GET,HEAD,OPTIONS,POST,PUT',
+    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+};
+app.use((0, cors_1.default)(corsOptions));
 // Routes
 app.use('/auth', auth_router_1.default);
 app.use('/reports', report_router_1.default);

@@ -6,7 +6,6 @@ const reportRouter = (0, express_1.Router)();
 reportRouter.post('', report_controller_1.createReport);
 reportRouter.post('/bukti', report_controller_1.getBuktiByByLaporanId);
 reportRouter.get('', report_controller_1.getAllReport);
-reportRouter.get('/:id', report_controller_1.getReportById);
 reportRouter.get('/email/:email', report_controller_1.getAllReportByEmail);
-reportRouter.delete('/:id', report_controller_1.deleteReportById);
+reportRouter.get('/:id', report_controller_1.getReportById);
 exports.default = reportRouter;
