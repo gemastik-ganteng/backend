@@ -23,7 +23,13 @@ const mongooseOptions = {
     connectTimeoutMS: 2 * 60 * 60 * 1000, // 2 hours for connection timeout
     bufferCommands: false, // Disable Mongoose buffering
 };
-app.use(cors());
+
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+  });
 
 
 
